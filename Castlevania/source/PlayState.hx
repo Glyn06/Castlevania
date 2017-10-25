@@ -12,8 +12,8 @@ class PlayState extends FlxState
 	override public function create():Void
 	{
 		super.create();
-		plataforma = new FlxSprite(100, 300);
-		plataforma.makeGraphic(700, 20, 0xFF000080);
+		plataforma = new FlxSprite(0, 200);
+		plataforma.makeGraphic(2000, 20, 0xFF000080);
 		plataforma.immovable = true;
 		p1 = new Player(100, 100);
 		p1.makeGraphic(32, 32, 0xFFFF004D);
