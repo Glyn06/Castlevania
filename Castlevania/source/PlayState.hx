@@ -1,8 +1,12 @@
 package;
 
 import flixel.FlxG;
+import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.FlxState;
+import flixel.addons.editors.ogmo.FlxOgmoLoader;
+import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.tile.FlxTilemap;
 
 class PlayState extends FlxState
 {
@@ -12,6 +16,8 @@ class PlayState extends FlxState
 	var deathTrap:FlxSprite;
 	private var maxTime:Float = 4;
 	private var timer:Float = 0;
+	private var tilemap:FlxTilemap;
+	private var enemyGroup:FlxTypedGroup<Enemy>;
 	
 	
 	override public function create():Void
@@ -26,15 +32,22 @@ class PlayState extends FlxState
 		plataformaDesaparece.immovable = true;
 		plataformaDesaparece.kill();*/
 		
-		plataforma = new FlxSprite(0, 200);
+		enemyGroup = new FlxTypedGroup<Enemy>();
+		
+		var loader:FlxOgmoLoader = new FlxOgmoLoader(AssetPaths.Level_1__oel);
+		tilemap = loader.loadTilemap(AssetPaths.asdfsadffsa__png, 16, 16, "tiles");
+		tilemap.setTileProperties(0, FlxObject.NONE);
+		tilemap.setTileProperties(1, FlxObject.ANY);
+		loader.loadEntities(placeEntities, "entities");
+		
+		/*plataforma = new FlxSprite(0, 200);
 		plataforma.makeGraphic(2000, 20, 0xFF000080);
-		plataforma.immovable = true;
+		plataforma.immovable = true;*/
 		
-		p1 = new Player(100, 100);
-		p1.makeGraphic(32, 32, 0xFFFF004D);
-		
+		add(tilemap);
 		add(p1);
-		add(plataforma);
+		add(enemyGroup);
+		//add(plataforma);
 		//add(plataformaDesaparece);
 		//add(deathTrap);
 	}
@@ -62,8 +75,26 @@ class PlayState extends FlxState
 			p1.kill();
 		}*/
 		
-		FlxG.collide(p1, plataforma);
+		FlxG.collide(p1, tilemap);
+		FlxG.collide(enemyGroup, tilemap);
 		
 		//FlxG.collide(p1, plataformaDesaparece);
+	}
+	
+	private function placeEntities(entityName:String, entityData:Xml):Void
+	{
+		var X:Int = Std.parseInt(entityData.get("x"));
+		var Y:Int = Std.parseInt(entityData.get("y"));
+		
+		switch (entityName)
+		{
+			case "Player":
+				p1 = new Player(X, Y);
+				p1.makeGraphic(32, 32, 0xffff0000);
+			case "Enemy_1":
+				var e:Enemy = new Enemy(X, Y);
+				e.makeGraphic(32, 32, 0xff00ff00);
+				enemyGroup.add(e);
+		}
 	}
 }
