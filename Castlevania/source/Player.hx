@@ -11,7 +11,7 @@ import flixel.system.FlxAssets.FlxGraphicAsset;
  */
 class Player extends FlxSprite 
 {
-	private var ataquePlayer:FlxSprite;
+	public var ataquePlayer(get, null):FlxSprite;
 	private var timeAttackMax:Float = 0.5;
 	private var timeAttack:Float = 0;
 	private var startCooldown:Bool = false;
@@ -20,6 +20,10 @@ class Player extends FlxSprite
 	{
 		super(X, Y, SimpleGraphic);
 		
+		ataquePlayer = new FlxSprite(x+width, y);
+		ataquePlayer.makeGraphic(20, 5, 0xFF00FFFF);
+		FlxG.state.add(ataquePlayer);
+		ataquePlayer.kill();
 		acceleration.y = 1500;
 	}
 	
@@ -57,18 +61,24 @@ class Player extends FlxSprite
 		{
 			if (facing==16) //WEIRD STTUFF HERE ASK CID FOR HELP
 			{
-				ataquePlayer = new FlxSprite(x+width, y);
-				ataquePlayer.makeGraphic(20, 5, 0xFF00FFFF);
-				FlxG.state.add(ataquePlayer);
+				ataquePlayer.revive();
 				startCooldown = true;
 			}
 			else
 			{
-				ataquePlayer = new FlxSprite(x-20, y);
-				ataquePlayer.makeGraphic(20, 5, 0xFF00FFFF);
-				FlxG.state.add(ataquePlayer);
+				ataquePlayer.revive();
 				startCooldown = true;
 			}
+		}
+		
+		if (ataquePlayer.alive) 
+		{
+			if (facing == 16) 
+				ataquePlayer.x = x + width;
+			else
+				ataquePlayer.x = x - 20;
+			
+			ataquePlayer.y = y;
 		}
 		
 		if (startCooldown == true)    //Cooldown y destruccion para los ataques
@@ -76,7 +86,7 @@ class Player extends FlxSprite
 			timeAttack += elapsed;
 			if (timeAttack >= 0.17) //cooldown
 			{
-				ataquePlayer.destroy();
+				ataquePlayer.kill();
 			}
 			if (timeAttack >= timeAttackMax) 
 			{
@@ -86,5 +96,10 @@ class Player extends FlxSprite
 		}
 		
 		super.update(elapsed);
+	}
+	
+	function get_ataquePlayer():FlxSprite 
+	{
+		return ataquePlayer;
 	}
 }

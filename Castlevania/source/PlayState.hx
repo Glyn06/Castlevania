@@ -77,6 +77,10 @@ class PlayState extends FlxState
 		
 		FlxG.collide(p1, tilemap);
 		FlxG.collide(enemyGroup, tilemap);
+		if (FlxG.overlap(p1, enemyGroup)) //colision player vs enemigos
+			p1.destroy();
+		
+		FlxG.overlap(enemyGroup, p1.ataquePlayer, enemyPlayerCollide);
 		
 		//FlxG.collide(p1, plataformaDesaparece);
 	}
@@ -96,5 +100,10 @@ class PlayState extends FlxState
 				e.makeGraphic(32, 32, 0xff00ff00);
 				enemyGroup.add(e);
 		}
+	}
+	
+	private function enemyPlayerCollide(e:Enemy, p:Player):Void
+	{
+		enemyGroup.remove(e, true);
 	}
 }
