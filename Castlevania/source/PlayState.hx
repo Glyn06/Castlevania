@@ -18,6 +18,11 @@ class PlayState extends FlxState
 	private var timer:Float = 0;
 	private var tilemap:FlxTilemap;
 	private var enemyGroup:FlxTypedGroup<Enemy>;
+	private var healthGroup:FlxTypedGroup<FlxSprite>;
+	private var ammoGroup:FlxTypedGroup<FlxSprite>;
+	private var k:FlxSprite = new FlxSprite(160, 192);
+	private var c:FlxSprite = new FlxSprite(160, 192);
+	private var ax:FlxSprite = new FlxSprite(160, 192);
 	
 	
 	override public function create():Void
@@ -33,6 +38,8 @@ class PlayState extends FlxState
 		plataformaDesaparece.kill();*/
 		
 		enemyGroup = new FlxTypedGroup<Enemy>();
+		healthGroup = new FlxTypedGroup<FlxSprite>();
+		ammoGroup = new FlxTypedGroup<FlxSprite>();
 		
 		var loader:FlxOgmoLoader = new FlxOgmoLoader(AssetPaths.Level_1__oel);
 		tilemap = loader.loadTilemap(AssetPaths.asdfsadffsa__png, 16, 16, "tiles");
@@ -43,13 +50,19 @@ class PlayState extends FlxState
 		/*plataforma = new FlxSprite(0, 200);
 		plataforma.makeGraphic(2000, 20, 0xFF000080);
 		plataforma.immovable = true;*/
+		ax.makeGraphic(16, 16, 0xff400040);
+		add(ax);
 		
 		add(tilemap);
 		add(p1);
 		add(enemyGroup);
+		add(healthGroup);
+		add(ammoGroup);
 		//add(plataforma);
 		//add(plataformaDesaparece);
 		//add(deathTrap);
+		
+		camera.follow(p1);
 	}
 
 	override public function update(elapsed:Float):Void
@@ -77,10 +90,21 @@ class PlayState extends FlxState
 		
 		FlxG.collide(p1, tilemap);
 		FlxG.collide(enemyGroup, tilemap);
-		if (FlxG.overlap(p1, enemyGroup)) //colision player vs enemigos
-			p1.destroy();
+	if (FlxG.overlap(p1, enemyGroup)) //colision player vs enemigos
+			p1.vida -= 2;
 		
-		FlxG.overlap(enemyGroup, p1.ataquePlayer, enemyPlayerCollide);
+		FlxG.overlap(enemyGroup, p1.ataquePlayer, playerAttackCollide);
+		FlxG.overlap(enemyGroup, p1.specialAttack, playerAttackCollide);
+		FlxG.overlap(healthGroup, p1, playerHealthCollide);
+		FlxG.overlap(ammoGroup, p1, playerAmmoCollide);
+		
+		if (FlxG.overlap(k, p1)) 
+			p1.weapon = Knife;
+		if (FlxG.overlap(c, p1)) 
+			p1.weapon = Cross;
+		if (FlxG.overlap(ax, p1))
+			p1.weapon = Axe;
+		
 		
 		//FlxG.collide(p1, plataformaDesaparece);
 	}
@@ -99,11 +123,36 @@ class PlayState extends FlxState
 				var e:Enemy = new Enemy(X, Y);
 				e.makeGraphic(32, 32, 0xff00ff00);
 				enemyGroup.add(e);
+			case "Health":
+				var h:FlxSprite = new FlxSprite(X, Y);
+				h.makeGraphic(16, 16, 0xffFFFF00);
+				healthGroup.add(h);
+			case "Ammo":
+				var a:FlxSprite = new FlxSprite(X, Y);
+				a.makeGraphic(16, 16, 0xff0000FF);
+				ammoGroup.add(a);
 		}
 	}
 	
-	private function enemyPlayerCollide(e:Enemy, p:Player):Void
+	private function playerAttackCollide(e:Enemy, p:Player):Void
 	{
 		enemyGroup.remove(e, true);
+	}
+	
+	private function playerHealthCollide(h:FlxSprite, p:Player):Void
+	{
+		healthGroup.remove(h, true);
+		if (p1.vida < 16 && p1.vida != 15)
+			p1.vida += 2;
+		else if (p1.vida == 15) 
+		{
+			p1.vida++;
+		}
+	}
+	
+	function playerAmmoCollide(a:FlxSprite, p:Player):Void 
+	{
+		ammoGroup.remove(a, true);
+		p1.ammo++;
 	}
 }
