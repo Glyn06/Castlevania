@@ -21,8 +21,8 @@ class PlayState extends FlxState
 	private var healthGroup:FlxTypedGroup<FlxSprite>;
 	private var ammoGroup:FlxTypedGroup<FlxSprite>;
 	private var k:FlxSprite = new FlxSprite(160, 192);
-	private var c:FlxSprite = new FlxSprite(160, 192);
-	private var ax:FlxSprite = new FlxSprite(160, 192);
+	//private var c:FlxSprite = new FlxSprite(176, 192);
+	private var ax:FlxSprite = new FlxSprite(144, 192);
 	
 	
 	override public function create():Void
@@ -50,9 +50,11 @@ class PlayState extends FlxState
 		/*plataforma = new FlxSprite(0, 200);
 		plataforma.makeGraphic(2000, 20, 0xFF000080);
 		plataforma.immovable = true;*/
-		ax.makeGraphic(16, 16, 0xff400040);
-		add(ax);
+		k.makeGraphic(16, 16, 0xff400040);
+		ax.makeGraphic(16, 16, 0xffffffff);
 		
+		add(k);
+		add(ax);
 		add(tilemap);
 		add(p1);
 		add(enemyGroup);
@@ -100,8 +102,8 @@ class PlayState extends FlxState
 		
 		if (FlxG.overlap(k, p1)) 
 			p1.weapon = Knife;
-		if (FlxG.overlap(c, p1)) 
-			p1.weapon = Cross;
+		//if (FlxG.overlap(c, p1)) 
+			//p1.weapon = Cross;
 		if (FlxG.overlap(ax, p1))
 			p1.weapon = Axe;
 		
@@ -153,6 +155,6 @@ class PlayState extends FlxState
 	function playerAmmoCollide(a:FlxSprite, p:Player):Void 
 	{
 		ammoGroup.remove(a, true);
-		p1.ammo++;
+		p1.ammo +=30;
 	}
 }

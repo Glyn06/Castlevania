@@ -105,12 +105,14 @@ class Player extends FlxSprite
 					if (facing == 16) 
 					{
 						ammo--;
+						specialAttack.acceleration.y = 0;
 						specialAttack.reset(x,y);
 						specialAttack.velocity.x = 500;
 					}
 					else
 					{
 						ammo--;
+						specialAttack.acceleration.y = 0;
 						specialAttack.reset(x-width,y);
 						specialAttack.velocity.x = -500;
 					}
@@ -119,6 +121,7 @@ class Player extends FlxSprite
 					if (facing == 16) 
 					{
 						ammo--;
+						specialAttack.acceleration.y = 0;
 						specialAttack.reset(x,y);
 						specialAttack.velocity.x = 50;
 						specialAttack.scale.set(2,2);
@@ -127,7 +130,8 @@ class Player extends FlxSprite
 					else
 					{
 						ammo--;
-						specialAttack.reset(x-width,y);
+						specialAttack.acceleration.y = 0;
+						specialAttack.reset(x+width,y);
 						specialAttack.velocity.x = -50;
 						specialAttack.scale.set(2,2);
 						specialAttack.updateHitbox;
@@ -146,7 +150,7 @@ class Player extends FlxSprite
 					else
 					{
 						ammo--;
-						specialAttack.reset(x-width,y);
+						specialAttack.reset(x+width,y);
 						specialAttack.velocity.y = -500;
 						specialAttack.velocity.x = -100;
 						specialAttack.acceleration.y = 1000;
