@@ -1,32 +1,20 @@
 package;
 
-import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.system.FlxAssets.FlxGraphicAsset;
 
 /**
  * ...
- * @author ...
+ * @author Glyn & Alexander
  */
 class Enemy extends FlxSprite 
 {
 
-	public function new(x:Int, y:Int) 
+	public function new(?X:Float=0, ?Y:Float=0, ?SimpleGraphic:FlxGraphicAsset) 
 	{
-		super(x, y);
+		super(X, Y, SimpleGraphic);
 		
 		acceleration.y = 1500;
-	}
-	
-	override public function update(elapsed:Float):Void 
-	{
-		if (isTouching(FlxObject.FLOOR))
-			velocity.x = -50;
-		else
-		{
-			velocity.x = 0;
-			acceleration.y = 1500;
-		}
-		super.update(elapsed);
 	}
 	
 }

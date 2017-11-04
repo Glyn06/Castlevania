@@ -13,7 +13,6 @@ import flixel.tweens.FlxTween;
 enum SpecialWeapon{
 	None;
 	Knife;
-	Cross;
 	Axe;
 }
  
@@ -25,7 +24,7 @@ class Player extends FlxSprite
 	public var specialAttack(get, null):FlxSprite;
 	public var weapon(default, set):SpecialWeapon;
 	private var startCooldown:Bool = false;
-	public var vida:Int = 15;
+	public var vida:Int = 16;
 	public var ammo(default, set):Int = 0;
 	
 	public function new(?X:Float=0, ?Y:Float=0, ?SimpleGraphic:FlxGraphicAsset) 
@@ -47,8 +46,8 @@ class Player extends FlxSprite
 	}
 	
 	override public function update(elapsed:Float):Void
-	{	trace(ammo);
-		if (vida == 0)
+	{	//trace(vida);
+		if (vida <= 0)
 			kill();
 		
 		if (isTouching(FlxObject.FLOOR)) //setear veolocidad x a 0 cuando este en el piso
@@ -116,27 +115,6 @@ class Player extends FlxSprite
 						specialAttack.reset(x-width,y);
 						specialAttack.velocity.x = -500;
 					}
-					case Cross:  //CROSS
-						
-					if (facing == 16) 
-					{
-						ammo--;
-						specialAttack.acceleration.y = 0;
-						specialAttack.reset(x,y);
-						specialAttack.velocity.x = 50;
-						specialAttack.scale.set(2,2);
-						specialAttack.updateHitbox;
-					}
-					else
-					{
-						ammo--;
-						specialAttack.acceleration.y = 0;
-						specialAttack.reset(x+width,y);
-						specialAttack.velocity.x = -50;
-						specialAttack.scale.set(2,2);
-						specialAttack.updateHitbox;
-					}	
-					
 					case Axe:  //AXE
 						
 					if (facing == 16) 

@@ -21,8 +21,8 @@ class PlayState extends FlxState
 	private var healthGroup:FlxTypedGroup<FlxSprite>;
 	private var ammoGroup:FlxTypedGroup<FlxSprite>;
 	private var k:FlxSprite = new FlxSprite(160, 192);
-	//private var c:FlxSprite = new FlxSprite(176, 192);
 	private var ax:FlxSprite = new FlxSprite(144, 192);
+	var e2:Enemy2;
 	
 	
 	override public function create():Void
@@ -71,6 +71,7 @@ class PlayState extends FlxState
 	{
 		super.update(elapsed);
 		
+		FlxG.worldBounds.set(0, 0, tilemap.width, tilemap.height);
 		timer += elapsed;
 		/*if (timer >= 2) 
 		{
@@ -92,19 +93,28 @@ class PlayState extends FlxState
 		
 		FlxG.collide(p1, tilemap);
 		FlxG.collide(enemyGroup, tilemap);
+		FlxG.collide(e2, tilemap);
 	if (FlxG.overlap(p1, enemyGroup)) //colision player vs enemigos
 			p1.vida -= 2;
-		
+	if (FlxG.overlap(p1, e2.bullet))
+			p1.vida -= 2;
+			
 		FlxG.overlap(enemyGroup, p1.ataquePlayer, playerAttackCollide);
 		FlxG.overlap(enemyGroup, p1.specialAttack, playerAttackCollide);
+		if (FlxG.overlap(e2, p1.ataquePlayer))
+		{
+			e2.kill();
+		}
+		if (FlxG.overlap(e2, p1.specialAttack))
+		{
+			e2.kill();
+		}
 		FlxG.overlap(healthGroup, p1, playerHealthCollide);
 		FlxG.overlap(ammoGroup, p1, playerAmmoCollide);
 		
-		if (FlxG.overlap(k, p1)) 
+	if (FlxG.overlap(k, p1)) 
 			p1.weapon = Knife;
-		//if (FlxG.overlap(c, p1)) 
-			//p1.weapon = Cross;
-		if (FlxG.overlap(ax, p1))
+	if (FlxG.overlap(ax, p1))
 			p1.weapon = Axe;
 		
 		
@@ -122,9 +132,21 @@ class PlayState extends FlxState
 				p1 = new Player(X, Y);
 				p1.makeGraphic(32, 32, 0xffff0000);
 			case "Enemy_1":
-				var e:Enemy = new Enemy(X, Y);
+				var e:Enemy1 = new Enemy1(X, Y);
 				e.makeGraphic(32, 32, 0xff00ff00);
 				enemyGroup.add(e);
+			case "Enemy_2":
+				e2 = new Enemy2(X, Y);
+				e2.makeGraphic(32, 32, 0xffFF80FF);
+				FlxG.state.add(e2);
+			case "Enemy_3":
+				var e3:Enemy3 = new Enemy3(X, Y);
+				e3.makeGraphic(32, 32, 0xff123456);
+				enemyGroup.add(e3);
+			case "Enemy_4":
+				var e4:Enemy4 = new Enemy4(X, Y);
+				e4.makeGraphic(16, 16, 0xff131124);
+				enemyGroup.add(e4);
 			case "Health":
 				var h:FlxSprite = new FlxSprite(X, Y);
 				h.makeGraphic(16, 16, 0xffFFFF00);
@@ -136,7 +158,7 @@ class PlayState extends FlxState
 		}
 	}
 	
-	private function playerAttackCollide(e:Enemy, p:Player):Void
+	private function playerAttackCollide(e:Enemy1, p:Player):Void
 	{
 		enemyGroup.remove(e, true);
 	}
