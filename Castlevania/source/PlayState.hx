@@ -26,6 +26,8 @@ class PlayState extends FlxState
 	{
 		super.create();
 		
+		FlxG.sound.playMusic(AssetPaths.VampireKiller__wav);
+		
 		enemyGroup = new FlxTypedGroup<Enemy>();
 		healthGroup = new FlxTypedGroup<FlxSprite>();
 		ammoGroup = new FlxTypedGroup<FlxSprite>();
@@ -65,19 +67,27 @@ class PlayState extends FlxState
 		FlxG.collide(deathTrapGroup, tilemap);
 		FlxG.collide(p1, PlataformaGroup);
 	if (FlxG.overlap(p1, enemyGroup)) //colision player vs enemigos
+		{
 			p1.vida -= 2;
+			FlxG.sound.play(AssetPaths.Player_Hit__wav);
+		}
 	if (FlxG.overlap(p1, e2.bullet))
+		{
 			p1.vida -= 2;
-			
+			FlxG.sound.play(AssetPaths.Player_Hit__wav);
+		}
+		
 		FlxG.overlap(enemyGroup, p1.ataquePlayer, playerAttackCollide);
 		FlxG.overlap(enemyGroup, p1.specialAttack, playerAttackCollide);
 		FlxG.overlap(deathTrapGroup, p1, deathCulo);
 		if (FlxG.overlap(e2, p1.ataquePlayer))
 		{
+			FlxG.sound.play(AssetPaths.Enemy_Death__wav);
 			e2.kill();
 		}
 		if (FlxG.overlap(e2, p1.specialAttack))
 		{
+			FlxG.sound.play(AssetPaths.Enemy_Death__wav);
 			e2.kill();
 		}
 		FlxG.overlap(healthGroup, p1, playerHealthCollide);
@@ -141,6 +151,7 @@ class PlayState extends FlxState
 	
 	private function playerAttackCollide(e:Enemy1, p:Player):Void
 	{
+		FlxG.sound.play(AssetPaths.Enemy_Death__wav);
 		enemyGroup.remove(e, true);
 	}
 	
