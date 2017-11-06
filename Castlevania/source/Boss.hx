@@ -1,5 +1,6 @@
 package;
 
+import flixel.FlxObject;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 
 /**
@@ -7,65 +8,91 @@ import flixel.system.FlxAssets.FlxGraphicAsset;
  * @author Glyn & Alexander
  */
 enum BossEstado{
-	Descansando;
-	Moviendose;
-	Atacando;
+	Patron1;
+	Patron2;
+	Patron3;
 }
  
 class Boss extends Enemy 
 {
 	private var estado:BossEstado;
-	private var vida:Int;
-	private var time:Int = 0;
-	private var change:Int = 64;
+	private var tiempo:Int = 0;
+	private var deMatar:Int = 96;
 	public function new(?X:Float=0, ?Y:Float=0, ?SimpleGraphic:FlxGraphicAsset) 
 	{
 		super(X, Y, SimpleGraphic);
 		
-		estado = BossEstado.Descansando;
+		estado = BossEstado.Patron1;
+		acceleration.y = 0;
+		velocity.x = -100;
 	}
 	
 	override public function update(elapsed:Float):Void 
 	{
-		super.update(elapsed);
-		
 		switch (estado) 
 		{
-			case Descansando:
-				makeGraphic(64, 64, 0xff80FFFF);
-				time += 1;
-				if (time >= change) 
+			case Patron1:
+				if (isTouching(FlxObject.LEFT)) 
 				{
-					time = 0;
-					estado = BossEstado.Moviendose;
-				}
-				
-			case Moviendose:
-				time += 1;
-				if (time < change) 
-				{
-					velocity.x = -100;
-				}
-				if (time >= change) 
-				{
+					velocity.y = -100;
 					velocity.x = 0;
-					time = 0;
-					makeGraphic(64, 64, 0xffffffff);
-					estado = BossEstado.Atacando;
+				}
+				if (isTouching(FlxObject.UP)) 
+				{
+					velocity.x = 100;
+					velocity.y = 0;
+				}
+				if (isTouching(FlxObject.RIGHT)) 
+				{
+					velocity.y = 100;
+					velocity.x = 0;
+				}
+				if (isTouching(FlxObject.FLOOR)) 
+				{
+					velocity.y = -100;
+					velocity.x = -100;
+					estado = BossEstado.Patron2;
 				}
 				
-			case Atacando:
-				time += 1;
-				if (time == 3) 
+			case Patron2:
+				if (isTouching(FlxObject.LEFT)) 
 				{
-					makeGraphic(64, 64, 0xff324159);
+					velocity.y = 0;
+					velocity.x = 0;
+					acceleration.y = 750;
 				}
-				if (time >= change) 
+				if (isTouching(FlxObject.FLOOR)) 
 				{
-					time = 0;
-					estado = BossEstado.Descansando;
+					acceleration.x = 750;
+					acceleration.y = 0;
+				}
+				if (isTouching(FlxObject.RIGHT)) 
+				{
+					estado = BossEstado.Patron3;
+				}
+				
+			case Patron3:
+				tiempo += 1;
+				if (tiempo >= deMatar) 
+				{
+					acceleration.y = -1500;
+					tiempo = 0;
+				}
+				if (isTouching(FlxObject.CEILING)) 
+				{
+					acceleration.y *=-1;
+				}
+				if (isTouching(FlxObject.FLOOR)) 
+				{
+					acceleration.y = 0;
+					acceleration.x = 0;
+					velocity.x = -100;
+					velocity.y = 0;
+					estado = BossEstado.Patron1;
 				}
 		}
+		
+		super.update(elapsed);
 	}
 	
 }

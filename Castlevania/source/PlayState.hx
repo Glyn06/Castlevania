@@ -94,8 +94,8 @@ class PlayState extends FlxState
 		FlxG.collide(p1, tilemap);
 		FlxG.collide(enemyGroup, tilemap);
 		FlxG.collide(e2, tilemap);
-	if (FlxG.overlap(p1, enemyGroup)) //colision player vs enemigos
-			p1.vida -= 2;
+	//if (FlxG.overlap(p1, enemyGroup)) //colision player vs enemigos
+	//		p1.vida -= 2;
 	if (FlxG.overlap(p1, e2.bullet))
 			p1.vida -= 2;
 			
