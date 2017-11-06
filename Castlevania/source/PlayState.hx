@@ -155,6 +155,10 @@ class PlayState extends FlxState
 				var a:FlxSprite = new FlxSprite(X, Y);
 				a.makeGraphic(16, 16, 0xff0000FF);
 				ammoGroup.add(a);
+			case "Boss":
+				var boss:Boss = new Boss(X, Y);
+				boss.makeGraphic(64, 64, 0xff80FFFF);
+				enemyGroup.add(boss);
 		}
 	}
 	

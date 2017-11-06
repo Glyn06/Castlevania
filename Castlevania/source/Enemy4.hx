@@ -29,6 +29,7 @@ class Enemy4 extends Enemy
 		if (itsNOW <= timetojump+3) 
 		{
 			acceleration.y = -10;
+			itsNOW = 0;
 		}
 	}
 	

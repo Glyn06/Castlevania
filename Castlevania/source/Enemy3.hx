@@ -1,6 +1,7 @@
 package;
 
 import flixel.FlxG;
+import flixel.FlxObject;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 
 /**
@@ -9,7 +10,6 @@ import flixel.system.FlxAssets.FlxGraphicAsset;
  */
 class Enemy3 extends Enemy 
 {
-	
 	public function new(?X:Int=0, ?Y:Int=0, ?SimpleGraphic:FlxGraphicAsset) 
 	{
 		super(X, Y, SimpleGraphic);
@@ -18,6 +18,9 @@ class Enemy3 extends Enemy
 	
 	override public function update(elapsed:Float):Void 
 	{
+		if (isTouching (FlxObject.FLOOR) || isTouching (FlxObject.CEILING)) 
+			acceleration.y *= -1;
+		
 		super.update(elapsed);
 	}
 	
