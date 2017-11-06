@@ -11,13 +11,10 @@ import flixel.tile.FlxTilemap;
 class PlayState extends FlxState
 {
 	var p1:Player;
-	var plataforma:FlxSprite;
-	var plataformaDesaparece:FlxSprite;
-	var deathTrap:FlxSprite;
-	private var maxTime:Float = 4;
-	private var timer:Float = 0;
 	private var tilemap:FlxTilemap;
 	private var enemyGroup:FlxTypedGroup<Enemy>;
+	private var deathTrapGroup:FlxTypedGroup<DeathTrap>;
+	private var PlataformaGroup:FlxTypedGroup<PlataformaMagica>;
 	private var healthGroup:FlxTypedGroup<FlxSprite>;
 	private var ammoGroup:FlxTypedGroup<FlxSprite>;
 	private var k:FlxSprite = new FlxSprite(160, 192);
@@ -28,18 +25,12 @@ class PlayState extends FlxState
 	override public function create():Void
 	{
 		super.create();
-		/*deathTrap = new FlxSprite(100, 50);
-		deathTrap.makeGraphic(100, 20, 0xFF734552);
-		deathTrap.acceleration.y = 1500;*/
-		
-		/*plataformaDesaparece = new FlxSprite(0, 150);
-		plataformaDesaparece.makeGraphic(100, 20, 0xFF500000);
-		plataformaDesaparece.immovable = true;
-		plataformaDesaparece.kill();*/
 		
 		enemyGroup = new FlxTypedGroup<Enemy>();
 		healthGroup = new FlxTypedGroup<FlxSprite>();
 		ammoGroup = new FlxTypedGroup<FlxSprite>();
+		deathTrapGroup = new FlxTypedGroup<DeathTrap>();
+		PlataformaGroup = new FlxTypedGroup<PlataformaMagica>();
 		
 		var loader:FlxOgmoLoader = new FlxOgmoLoader(AssetPaths.Level_1__oel);
 		tilemap = loader.loadTilemap(AssetPaths.asdfsadffsa__png, 16, 16, "tiles");
@@ -47,9 +38,6 @@ class PlayState extends FlxState
 		tilemap.setTileProperties(1, FlxObject.ANY);
 		loader.loadEntities(placeEntities, "entities");
 		
-		/*plataforma = new FlxSprite(0, 200);
-		plataforma.makeGraphic(2000, 20, 0xFF000080);
-		plataforma.immovable = true;*/
 		k.makeGraphic(16, 16, 0xff400040);
 		ax.makeGraphic(16, 16, 0xffffffff);
 		
@@ -60,9 +48,8 @@ class PlayState extends FlxState
 		add(enemyGroup);
 		add(healthGroup);
 		add(ammoGroup);
-		//add(plataforma);
-		//add(plataformaDesaparece);
-		//add(deathTrap);
+		add(deathTrapGroup);
+		add(PlataformaGroup);
 		
 		camera.follow(p1);
 	}
@@ -72,35 +59,19 @@ class PlayState extends FlxState
 		super.update(elapsed);
 		
 		FlxG.worldBounds.set(0, 0, tilemap.width, tilemap.height);
-		timer += elapsed;
-		/*if (timer >= 2) 
-		{
-			plataformaDesaparece.revive();
-			
-			if (timer >= maxTime) 
-			{
-				plataformaDesaparece.kill();
-				timer = 0;
-			}
-		}
-		
-		FlxG.collide(deathTrap, plataforma);
-		
-		if (FlxG.collide(p1, deathTrap)) 
-		{
-			p1.kill();
-		}*/
-		
 		FlxG.collide(p1, tilemap);
 		FlxG.collide(enemyGroup, tilemap);
 		FlxG.collide(e2, tilemap);
-	//if (FlxG.overlap(p1, enemyGroup)) //colision player vs enemigos
-	//		p1.vida -= 2;
+		FlxG.collide(deathTrapGroup, tilemap);
+		FlxG.collide(p1, PlataformaGroup);
+	if (FlxG.overlap(p1, enemyGroup)) //colision player vs enemigos
+			p1.vida -= 2;
 	if (FlxG.overlap(p1, e2.bullet))
 			p1.vida -= 2;
 			
 		FlxG.overlap(enemyGroup, p1.ataquePlayer, playerAttackCollide);
 		FlxG.overlap(enemyGroup, p1.specialAttack, playerAttackCollide);
+		FlxG.overlap(deathTrapGroup, p1, deathCulo);
 		if (FlxG.overlap(e2, p1.ataquePlayer))
 		{
 			e2.kill();
@@ -116,9 +87,6 @@ class PlayState extends FlxState
 			p1.weapon = Knife;
 	if (FlxG.overlap(ax, p1))
 			p1.weapon = Axe;
-		
-		
-		//FlxG.collide(p1, plataformaDesaparece);
 	}
 	
 	private function placeEntities(entityName:String, entityData:Xml):Void
@@ -159,6 +127,15 @@ class PlayState extends FlxState
 				var boss:Boss = new Boss(X, Y);
 				boss.makeGraphic(64, 64, 0xff80FFFF);
 				enemyGroup.add(boss);
+			case "DeathTrap":
+				var d = new DeathTrap(X, Y);
+				d.makeGraphic(100, 20, 0xFF734552);
+				deathTrapGroup.add(d);
+			case "PlataformaD":
+				var plat = new PlataformaMagica(X, Y);
+				plat.makeGraphic(100, 20, 0xFF500000);
+				plat.immovable = true;
+				PlataformaGroup.add(plat);
 		}
 	}
 	
@@ -181,6 +158,11 @@ class PlayState extends FlxState
 	function playerAmmoCollide(a:FlxSprite, p:Player):Void 
 	{
 		ammoGroup.remove(a, true);
-		p1.ammo +=30;
+		p1.ammo ++;
+	}
+	
+	function deathCulo(d:DeathTrap, p:Player):Void
+	{
+		p1.kill();
 	}
 }
