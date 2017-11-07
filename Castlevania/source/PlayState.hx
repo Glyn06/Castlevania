@@ -11,6 +11,7 @@ import flixel.tile.FlxTilemap;
 class PlayState extends FlxState
 {
 	var p1:Player;
+	var boss:Boss;
 	private var tilemap:FlxTilemap;
 	private var enemyGroup:FlxTypedGroup<Enemy>;
 	private var deathTrapGroup:FlxTypedGroup<DeathTrap>;
@@ -43,10 +44,10 @@ class PlayState extends FlxState
 		k.makeGraphic(16, 16, 0xff400040);
 		ax.makeGraphic(16, 16, 0xffffffff);
 		
+		add(p1);
 		add(k);
 		add(ax);
 		add(tilemap);
-		add(p1);
 		add(enemyGroup);
 		add(healthGroup);
 		add(ammoGroup);
@@ -59,6 +60,8 @@ class PlayState extends FlxState
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
+		p1.barra.x = p1.x -100;
+		p1.barra.y = p1.y -90;
 		
 		FlxG.worldBounds.set(0, 0, tilemap.width, tilemap.height);
 		FlxG.collide(p1, tilemap);
@@ -134,7 +137,7 @@ class PlayState extends FlxState
 				a.makeGraphic(16, 16, 0xff0000FF);
 				ammoGroup.add(a);
 			case "Boss":
-				var boss:Boss = new Boss(X, Y);
+				boss = new Boss(X, Y);
 				boss.makeGraphic(64, 64, 0xff80FFFF);
 				enemyGroup.add(boss);
 			case "DeathTrap":
@@ -151,8 +154,20 @@ class PlayState extends FlxState
 	
 	private function playerAttackCollide(e:Enemy1, p:Player):Void
 	{
-		FlxG.sound.play(AssetPaths.Enemy_Death__wav);
-		enemyGroup.remove(e, true);
+		for (i in 0 ... enemyGroup.length) 
+		{
+			if (enemyGroup.members[i].boss == true) 
+			{
+				FlxG.sound.play(AssetPaths.Enemy_Death__wav);
+				boss.vida -= 2;
+			}
+			else 
+			{
+				FlxG.sound.play(AssetPaths.Enemy_Death__wav);
+				enemyGroup.remove(e, true);
+			}
+		}
+		
 	}
 	
 	private function playerHealthCollide(h:FlxSprite, p:Player):Void

@@ -5,6 +5,7 @@ import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.tweens.FlxTween;
+import flixel.ui.FlxBar;
 
 /**
  * ...
@@ -18,6 +19,7 @@ enum SpecialWeapon{
  
 class Player extends FlxSprite 
 {
+	public var barra(get, null):FlxBar;
 	public var ataquePlayer(get, null):FlxSprite;
 	private var timeAttackMax:Float = 0.5;
 	private var timeAttack:Float = 0;
@@ -30,6 +32,9 @@ class Player extends FlxSprite
 	public function new(?X:Float=0, ?Y:Float=0, ?SimpleGraphic:FlxGraphicAsset) 
 	{
 		super(X, Y, SimpleGraphic);
+		barra = new FlxBar(x, y, LEFT_TO_RIGHT, 100, 10, this, "vida", 0, 16, true);
+		barra.createColoredEmptyBar(0xff000000, true, 0xffffffff);
+		FlxG.state.add(barra);
 		weapon = SpecialWeapon.None;
 		
 		ataquePlayer = new FlxSprite(x+width, y);
@@ -41,12 +46,10 @@ class Player extends FlxSprite
 		specialAttack.makeGraphic(16, 16, 0xff0000FF);
 		FlxG.state.add(specialAttack);
 		specialAttack.kill();
-		
-		acceleration.y = 1500;
 	}
 	
 	override public function update(elapsed:Float):Void
-	{	//trace(vida);
+	{
 		if (vida <= 0)
 			kill();
 		
@@ -187,5 +190,10 @@ class Player extends FlxSprite
 	function set_weapon(value:SpecialWeapon):SpecialWeapon 
 	{
 		return weapon = value;
+	}
+	
+	function get_barra():FlxBar 
+	{
+		return barra;
 	}
 }

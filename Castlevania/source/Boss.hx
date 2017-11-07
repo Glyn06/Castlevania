@@ -1,7 +1,9 @@
 package;
 
+import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.system.FlxAssets.FlxGraphicAsset;
+import flixel.ui.FlxBar;
 
 /**
  * ...
@@ -15,9 +17,11 @@ enum BossEstado{
  
 class Boss extends Enemy 
 {
+	private var barra:FlxBar;
 	private var estado:BossEstado;
 	private var tiempo:Int = 0;
 	private var deMatar:Int = 96;
+	public var vida(default, set):Int = 16;
 	public function new(?X:Float=0, ?Y:Float=0, ?SimpleGraphic:FlxGraphicAsset) 
 	{
 		super(X, Y, SimpleGraphic);
@@ -25,6 +29,7 @@ class Boss extends Enemy
 		estado = BossEstado.Patron1;
 		acceleration.y = 0;
 		velocity.x = -100;
+		boss = true;
 	}
 	
 	override public function update(elapsed:Float):Void 
@@ -93,6 +98,11 @@ class Boss extends Enemy
 		}
 		
 		super.update(elapsed);
+	}
+	
+	function set_vida(value:Int):Int 
+	{
+		return vida = value;
 	}
 	
 }
