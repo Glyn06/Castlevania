@@ -22,9 +22,8 @@ class PlataformaMagica extends FlxSprite
 		_y = y;
 	}
 	
-	override public function update(elapsed:Float):Void 
+	override public function update(elapsed:Float):Void
 	{
-		trace(timer);
 		timer += elapsed;
 		if (timer >= 2) 
 		{

@@ -29,11 +29,13 @@ class Boss extends Enemy
 		estado = BossEstado.Patron1;
 		acceleration.y = 0;
 		velocity.x = -100;
-		boss = true;
 	}
 	
 	override public function update(elapsed:Float):Void 
 	{
+		if (vida <= 0)
+			kill();
+		
 		switch (estado) 
 		{
 			case Patron1:

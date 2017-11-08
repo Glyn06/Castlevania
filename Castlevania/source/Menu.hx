@@ -21,6 +21,7 @@ enum Donde {
 	
 	override public function create():Void 
 	{
+		FlxG.sound.pause();
 		cursor = new FlxSprite(FlxG.width/2 -40,140);
 		cursor.makeGraphic(8, 8, 0xffffffff);
 		texto = new FlxText (10, 30, 0, "Castlevania", 32);

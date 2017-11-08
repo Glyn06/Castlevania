@@ -7,19 +7,19 @@ import flixel.FlxState;
 import flixel.addons.editors.ogmo.FlxOgmoLoader;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.tile.FlxTilemap;
+import flixel.ui.FlxBar;
 
 class PlayState extends FlxState
 {
 	var p1:Player;
-	var boss:Boss;
 	private var tilemap:FlxTilemap;
 	private var enemyGroup:FlxTypedGroup<Enemy>;
 	private var deathTrapGroup:FlxTypedGroup<DeathTrap>;
 	private var PlataformaGroup:FlxTypedGroup<PlataformaMagica>;
 	private var healthGroup:FlxTypedGroup<FlxSprite>;
 	private var ammoGroup:FlxTypedGroup<FlxSprite>;
-	private var k:FlxSprite = new FlxSprite(160, 192);
-	private var ax:FlxSprite = new FlxSprite(144, 192);
+	private var k:FlxSprite = new FlxSprite(2688, 176);
+	private var ax:FlxSprite = new FlxSprite(4256, 208);
 	var e2:Enemy2;
 	
 	
@@ -41,10 +41,10 @@ class PlayState extends FlxState
 		tilemap.setTileProperties(1, FlxObject.ANY);
 		loader.loadEntities(placeEntities, "entities");
 		
-		k.makeGraphic(16, 16, 0xff400040);
-		ax.makeGraphic(16, 16, 0xffffffff);
+		k.makeGraphic(16, 16, 0xff021705);
+		ax.makeGraphic(16, 16, 0xff011311);
 		
-		add(p1);
+		
 		add(k);
 		add(ax);
 		add(tilemap);
@@ -53,6 +53,7 @@ class PlayState extends FlxState
 		add(ammoGroup);
 		add(deathTrapGroup);
 		add(PlataformaGroup);
+		add(p1);
 		
 		camera.follow(p1);
 	}
@@ -78,7 +79,22 @@ class PlayState extends FlxState
 		{
 			p1.vida -= 2;
 			FlxG.sound.play(AssetPaths.Player_Hit__wav);
+			e2.bullet.kill();
 		}
+	if (p1.y > tilemap.height + 32 && p1.alive == true) 
+	{
+		FlxG.sound.play(AssetPaths.Player_Hit__wav);
+		p1.kill();
+	}
+	
+	if (p1.x==5072 && p1.y ==192)
+	{
+		FlxG.switchState(new BossState());
+	}
+	if (p1.alive == false) 
+	{
+		FlxG.switchState(new Menu());
+	}
 		
 		FlxG.overlap(enemyGroup, p1.ataquePlayer, playerAttackCollide);
 		FlxG.overlap(enemyGroup, p1.specialAttack, playerAttackCollide);
@@ -92,14 +108,21 @@ class PlayState extends FlxState
 		{
 			FlxG.sound.play(AssetPaths.Enemy_Death__wav);
 			e2.kill();
+			p1.specialAttack.kill();
 		}
 		FlxG.overlap(healthGroup, p1, playerHealthCollide);
 		FlxG.overlap(ammoGroup, p1, playerAmmoCollide);
 		
 	if (FlxG.overlap(k, p1)) 
-			p1.weapon = Knife;
+			{
+				p1.weapon = Knife;
+				k.kill();
+			}
 	if (FlxG.overlap(ax, p1))
-			p1.weapon = Axe;
+			{
+				p1.weapon = Axe;
+				ax.kill();
+			}
 	}
 	
 	private function placeEntities(entityName:String, entityData:Xml):Void
@@ -136,10 +159,6 @@ class PlayState extends FlxState
 				var a:FlxSprite = new FlxSprite(X, Y);
 				a.makeGraphic(16, 16, 0xff0000FF);
 				ammoGroup.add(a);
-			case "Boss":
-				boss = new Boss(X, Y);
-				boss.makeGraphic(64, 64, 0xff80FFFF);
-				enemyGroup.add(boss);
 			case "DeathTrap":
 				var d = new DeathTrap(X, Y);
 				d.makeGraphic(100, 20, 0xFF734552);
@@ -153,21 +172,10 @@ class PlayState extends FlxState
 	}
 	
 	private function playerAttackCollide(e:Enemy1, p:Player):Void
-	{
-		for (i in 0 ... enemyGroup.length) 
-		{
-			if (enemyGroup.members[i].boss == true) 
-			{
-				FlxG.sound.play(AssetPaths.Enemy_Death__wav);
-				boss.vida -= 2;
-			}
-			else 
-			{
-				FlxG.sound.play(AssetPaths.Enemy_Death__wav);
-				enemyGroup.remove(e, true);
-			}
-		}
-		
+	{	
+		FlxG.sound.play(AssetPaths.Enemy_Death__wav);
+		enemyGroup.remove(e, true);
+		p1.specialAttack.kill();
 	}
 	
 	private function playerHealthCollide(h:FlxSprite, p:Player):Void
